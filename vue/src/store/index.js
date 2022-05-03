@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import axiosClient from '@/axios'
 
 export default createStore({
   state: {
@@ -22,18 +23,17 @@ export default createStore({
   },
   actions: {
     register ({ commit }, user) {
-      return fetch('http://surveyapp_laravel-vue3.test/api/register', {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify(user)
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          commit('setUser', res)
-          return res
+      return axiosClient.post('/register', user)
+        .then(({ data }) => {
+          commit('setUser', data)
+          return data
+        })
+    },
+    login ({ commit }, credentials) {
+      return axiosClient.post('/login', credentials)
+        .then(({ data }) => {
+          commit('setUser', data)
+          return data
         })
     }
   },
