@@ -14,6 +14,7 @@ export default createStore({
     logout: state => {
       state.user.data = {}
       state.user.token = null
+      sessionStorage.removeItem('TOKEN')
     },
     setUser: (state, userData) => {
       state.user.data = userData.user
@@ -33,6 +34,13 @@ export default createStore({
       return axiosClient.post('/login', credentials)
         .then(({ data }) => {
           commit('setUser', data)
+          return data
+        })
+    },
+    logout ({ commit }) {
+      return axiosClient.get('/logout')
+        .then(({ data }) => {
+          commit('logout')
           return data
         })
     }
