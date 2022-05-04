@@ -191,11 +191,13 @@ import PageComponent from '@/components/PageComponent.vue'
 import QuestionEditor from '@/components/editor/QuestionEditor.vue'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { v4 as uuidv4 } from 'uuid'
 
 const store = useStore()
 const route = useRoute()
+// eslint-disable-next-line no-unused-vars
+const router = useRouter()
 
 const model = ref({
   title: '',
@@ -232,8 +234,18 @@ function addQuestion (index) {
 
   model.value.questions.splice(index, 0, newQuestion)
 }
+
 function deleteQuestion (question) {
   model.value.questions = model.value.questions.filter((q) => q.id !== question.id)
+}
+
+function saveSurvey () {
+  store.dispatch('saveSurvey', model.value).then(({ data }) => {
+    router.push({
+      name: 'SurveysUpdate',
+      params: { id: data.id }
+    })
+  })
 }
 
 </script>

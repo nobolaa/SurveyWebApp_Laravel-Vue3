@@ -67,7 +67,7 @@ class AuthController extends Controller
         $user->currentAccessToken()->delete();
 
         return response([
-            'sucess' => true
+            'success' => true
         ]);
     }
 }

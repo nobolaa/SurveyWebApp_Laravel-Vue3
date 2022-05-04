@@ -95,6 +95,17 @@ export default createStore({
       state.user.data = userData.user
       state.user.token = userData.token
       sessionStorage.setItem('TOKEN', userData.token)
+    },
+    saveSurvey: (state, surveyData) => {
+      state.surveys = [...state.surveys, surveyData]
+    },
+    updateSurvey: (state, surveyData) => {
+      state.surveys = state.surveys.map((s) => {
+        if (s.id === surveyData.id) return surveyData
+        else return s
+      })
+
+      console.log(state.surveys)
     }
   },
   actions: {
@@ -118,6 +129,25 @@ export default createStore({
           commit('logout')
           return data
         })
+    },
+    saveSurvey ({ commit }, survey) {
+      let response
+
+      if (survey.id) {
+        response = axiosClient.put(`/survey/${survey.id}`, survey)
+          .then(({ data }) => {
+            commit('updateSurvey', data.data)
+            return data
+          })
+      } else {
+        response = axiosClient.post('/survey', survey)
+          .then(({ data }) => {
+            commit('saveSurvey', data.data)
+            return data
+          })
+      }
+
+      return response
     }
   },
   modules: {
