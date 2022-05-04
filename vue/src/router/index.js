@@ -3,6 +3,7 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import SurveysView from '../views/SurveysView.vue'
+import SurveyView from '../views/SurveyView.vue'
 
 import DefaultLayout from '../components/DefaultLayout.vue'
 import AuthLayout from '../components/AuthLayout.vue'
@@ -18,7 +19,9 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: '/dashboard', name: 'Dashboard', component: DashboardView },
-      { path: '/surveys', name: 'Surveys', component: SurveysView }
+      { path: '/surveys', name: 'Surveys', component: SurveysView },
+      { path: '/surveys/create', name: 'SurveysCreate', component: SurveyView },
+      { path: '/surveys/:id', name: 'SurveysUpdate', component: SurveyView }
     ]
   },
   {
