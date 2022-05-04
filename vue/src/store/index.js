@@ -46,7 +46,7 @@ const tmpSurveys = [
         id: 3,
         type: 'text',
         question: 'What\'s your favourite Youtube channel?',
-        description: 'null',
+        description: null,
         data: {}
       },
       {
@@ -80,7 +80,8 @@ export default createStore({
       data: {},
       token: sessionStorage.getItem('TOKEN')
     },
-    surveys: [...tmpSurveys]
+    surveys: [...tmpSurveys],
+    questionTypes: ['text', 'select', 'radio', 'checkbox', 'textarea']
   },
   getters: {
   },
