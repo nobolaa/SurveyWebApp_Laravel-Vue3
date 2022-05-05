@@ -80,6 +80,10 @@ export default createStore({
       data: {},
       token: sessionStorage.getItem('TOKEN')
     },
+    currentSurvey: {
+      loading: false,
+      data: {}
+    },
     surveys: [...tmpSurveys],
     questionTypes: ['text', 'select', 'radio', 'checkbox', 'textarea']
   },
@@ -96,16 +100,11 @@ export default createStore({
       state.user.token = userData.token
       sessionStorage.setItem('TOKEN', userData.token)
     },
-    saveSurvey: (state, surveyData) => {
-      state.surveys = [...state.surveys, surveyData]
+    setCurrentSurveyLoading: (state, value) => {
+      state.currentSurvey.loading = value
     },
-    updateSurvey: (state, surveyData) => {
-      state.surveys = state.surveys.map((s) => {
-        if (s.id === surveyData.id) return surveyData
-        else return s
-      })
-
-      console.log(state.surveys)
+    setCurrentSurvey: (state, survey) => {
+      state.currentSurvey.data = survey.data
     }
   },
   actions: {
@@ -130,24 +129,42 @@ export default createStore({
           return data
         })
     },
+    getSurvey ({ commit }, id) {
+      commit('setCurrentSurveyLoading', true)
+      return axiosClient.get(`/survey/${id}`)
+        .then((res) => {
+          commit('setCurrentSurvey', res.data)
+          commit('setCurrentSurveyLoading', false)
+          return res
+        })
+        .catch((err) => {
+          commit('setCurrentSurveyLoading', false)
+          throw err
+        })
+    },
     saveSurvey ({ commit }, survey) {
+      delete survey.image_url
       let response
 
       if (survey.id) {
         response = axiosClient.put(`/survey/${survey.id}`, survey)
           .then(({ data }) => {
-            commit('updateSurvey', data.data)
+            commit('setCurrentSurvey', data.data)
             return data
           })
       } else {
         response = axiosClient.post('/survey', survey)
           .then(({ data }) => {
-            commit('saveSurvey', data.data)
+            commit('setCurrentSurvey', data.data)
             return data
           })
       }
 
       return response
+    },
+    // eslint-disable-next-line no-empty-pattern
+    deleteSurvey ({}, id) {
+      return axiosClient.delete(`/survey/${id}`)
     }
   },
   modules: {
