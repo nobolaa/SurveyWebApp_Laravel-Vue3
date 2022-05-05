@@ -201,14 +201,15 @@
 </template>
 
 <script setup>
-import PageComponent from '@/components/PageComponent.vue'
-import QuestionEditor from '@/components/editor/QuestionEditor.vue'
-import { useStore } from 'vuex'
+import { v4 as uuidv4 } from 'uuid'
+// eslint-disable-next-line no-unused-vars
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { v4 as uuidv4 } from 'uuid'
+import store from '../store'
 
-const store = useStore()
+import PageComponent from '../components/PageComponent.vue'
+import QuestionEditor from '../components/editor/QuestionEditor.vue'
+
 const route = useRoute()
 // eslint-disable-next-line no-unused-vars
 const router = useRouter()
@@ -227,15 +228,10 @@ let model = ref({
   questions: []
 })
 
-watch(
-  () => store.state.currentSurvey.data,
-  (newVal, oldVal) => {
-    model.value = JSON.parse(JSON.stringify(newVal))
-  }
-)
-
 if (route.params.id) {
-  store.dispatch('getSurvey', route.params.id)
+  store.dispatch('getSurvey', route.params.id).then(({ data }) => {
+    model.value = JSON.parse(JSON.stringify(data.data))
+  })
 }
 
 function questionChange (question) {
@@ -254,6 +250,7 @@ function onImageChosen (ev) {
   reader.onload = () => {
     model.value.image = reader.result
     model.value.image_url = reader.result
+    ev.target.value = ''
   }
   reader.readAsDataURL(file)
 }
@@ -276,10 +273,14 @@ function deleteQuestion (question) {
 
 function saveSurvey () {
   store.dispatch('saveSurvey', model.value).then(({ data }) => {
-    router.push({
-      name: 'SurveysUpdate',
-      params: { id: data.id }
-    })
+    if (route.params.id) {
+      model.value = JSON.parse(JSON.stringify(data))
+    } else {
+      router.push({
+        name: 'SurveyView',
+        params: { id: data.id }
+      })
+    }
   })
 }
 

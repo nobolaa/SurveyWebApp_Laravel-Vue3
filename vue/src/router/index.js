@@ -20,8 +20,8 @@ const routes = [
     children: [
       { path: '/dashboard', name: 'Dashboard', component: DashboardView },
       { path: '/surveys', name: 'Surveys', component: SurveysView },
-      { path: '/surveys/create', name: 'SurveysCreate', component: SurveyView },
-      { path: '/surveys/:id', name: 'SurveysUpdate', component: SurveyView }
+      { path: '/survey', name: 'SurveyCreate', component: SurveyView },
+      { path: '/survey/:id', name: 'SurveyView', component: SurveyView }
     ]
   },
   {
