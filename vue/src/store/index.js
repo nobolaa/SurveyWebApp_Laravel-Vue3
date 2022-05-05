@@ -15,7 +15,12 @@ export default createStore({
       loading: false,
       data: []
     },
-    questionTypes: ['text', 'select', 'radio', 'checkbox', 'textarea']
+    questionTypes: ['text', 'select', 'radio', 'checkbox', 'textarea'],
+    notification: {
+      show: false,
+      type: null,
+      message: null
+    }
   },
   getters: {
   },
@@ -37,10 +42,18 @@ export default createStore({
       state.currentSurvey.data = survey.data
     },
     setSurveysLoading: (state, value) => {
-      state.currentSurvey.loading = value
+      state.surveys.loading = value
     },
     setSurveys: (state, surveys) => {
       state.surveys.data = surveys.data
+    },
+    notify: (state, { message, type }) => {
+      state.notification.show = true
+      state.notification.type = type
+      state.notification.message = message
+      setTimeout(() => {
+        state.notification.show = false
+      }, 3000)
     }
   },
   actions: {

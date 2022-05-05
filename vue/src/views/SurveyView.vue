@@ -19,7 +19,7 @@
         </div>
     </template>
     <div v-if="surveyLoading" class="flex justify-center">Loading...</div>
-    <form v-else @submit.prevent="saveSurvey">
+    <form v-else @submit.prevent="saveSurvey" class="opacity-0 animate-fade-in-down">
       <div class="shadow sm:rounded-md sm:overflow-hidden">
           <!-- Survey Fields -->
           <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
@@ -274,8 +274,16 @@ function deleteQuestion (question) {
 function saveSurvey () {
   store.dispatch('saveSurvey', model.value).then(({ data }) => {
     if (route.params.id) {
+      store.commit('notify', {
+        type: 'success',
+        message: 'Survey was successfully updated'
+      })
       model.value = JSON.parse(JSON.stringify(data))
     } else {
+      store.commit('notify', {
+        type: 'success',
+        message: 'Survey was successfully created'
+      })
       router.push({
         name: 'SurveyView',
         params: { id: data.id }
@@ -288,6 +296,10 @@ function deleteSurvey () {
   if (confirm('Are you sure you want to delete this survey? Operation can\'t be undone!!')) {
     store.dispatch('deleteSurvey', model.value.id)
       .then(() => {
+        store.commit('notify', {
+          type: 'success',
+          message: 'Survey was successfully deleted'
+        })
         router.push({
           name: 'Surveys'
         })
