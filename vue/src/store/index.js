@@ -5,6 +5,7 @@ export default createStore({
   state: {
     user: {
       data: {},
+      loading: false,
       token: sessionStorage.getItem('TOKEN')
     },
     dashboard: {
@@ -34,6 +35,9 @@ export default createStore({
       state.user.data = {}
       state.user.token = null
       sessionStorage.removeItem('TOKEN')
+    },
+    setUserLoading: (state, value) => {
+      state.user.loading = value
     },
     setUser: (state, userData) => {
       state.user.data = userData.user
@@ -70,17 +74,29 @@ export default createStore({
   },
   actions: {
     register ({ commit }, user) {
+      commit('setUserLoading', true)
       return axiosClient.post('/register', user)
         .then(({ data }) => {
           commit('setUser', data)
+          commit('setUserLoading', false)
           return data
+        })
+        .catch((err) => {
+          commit('setUserLoading', false)
+          throw err
         })
     },
     login ({ commit }, credentials) {
+      commit('setUserLoading', true)
       return axiosClient.post('/login', credentials)
         .then(({ data }) => {
           commit('setUser', data)
+          commit('setUserLoading', false)
           return data
+        })
+        .catch((err) => {
+          commit('setUserLoading', false)
+          throw err
         })
     },
     logout ({ commit }) {
