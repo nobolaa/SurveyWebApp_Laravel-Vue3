@@ -7,6 +7,10 @@ export default createStore({
       data: {},
       token: sessionStorage.getItem('TOKEN')
     },
+    dashboard: {
+      loading: false,
+      data: {}
+    },
     currentSurvey: {
       loading: false,
       data: {}
@@ -35,6 +39,12 @@ export default createStore({
       state.user.data = userData.user
       state.user.token = userData.token
       sessionStorage.setItem('TOKEN', userData.token)
+    },
+    setDashboardLoading: (state, value) => {
+      state.dashboard.loading = value
+    },
+    setDashboardData: (state, data) => {
+      state.dashboard.data = data
     },
     setCurrentSurveyLoading: (state, value) => {
       state.currentSurvey.loading = value
@@ -78,6 +88,19 @@ export default createStore({
         .then(({ data }) => {
           commit('logout')
           return data
+        })
+    },
+    getDashboardData ({ commit }) {
+      commit('setDashboardLoading', true)
+      return axiosClient.get('/dashboard')
+        .then((res) => {
+          commit('setDashboardData', res.data)
+          commit('setDashboardLoading', false)
+          return res
+        })
+        .catch((err) => {
+          commit('setDashboardLoading', false)
+          throw err
         })
     },
     getSurvey ({ commit }, id) {
