@@ -93,6 +93,33 @@ export default createStore({
           throw err
         })
     },
+    getSurveyBySlug ({ commit }, slug) {
+      commit('setCurrentSurveyLoading', true)
+      return axiosClient.get(`/survey-by-slug/${slug}`)
+        .then((res) => {
+          commit('setCurrentSurvey', res.data)
+          commit('setCurrentSurveyLoading', false)
+          return res
+        })
+        .catch((err) => {
+          commit('setCurrentSurveyLoading', false)
+          throw err
+        })
+    },
+    getSurveys ({ commit }, { url = null } = {}) {
+      url = url || '/survey'
+      commit('setSurveysLoading', true)
+      return axiosClient.get(url)
+        .then((res) => {
+          commit('setSurveys', res.data)
+          commit('setSurveysLoading', false)
+          return res
+        })
+        .catch((err) => {
+          commit('setSurveysLoading', false)
+          throw err
+        })
+    },
     saveSurvey ({ commit }, survey) {
       delete survey.image_url
       let response
@@ -112,23 +139,13 @@ export default createStore({
       }
 
       return response
-    }, // eslint-disable-next-line no-empty-pattern
+    },
+    saveSurveyAnswer ({ commit }, { surveyId, answers }) {
+      return axiosClient.post(`/survey/${surveyId}/answer`, { answers })
+    },
+    // eslint-disable-next-line no-empty-pattern
     deleteSurvey ({}, id) {
       return axiosClient.delete(`/survey/${id}`)
-    },
-    getSurveys ({ commit }, { url = null } = {}) {
-      url = url || '/survey'
-      commit('setSurveysLoading', true)
-      return axiosClient.get(url)
-        .then((res) => {
-          commit('setSurveys', res.data)
-          commit('setSurveysLoading', false)
-          return res
-        })
-        .catch((err) => {
-          commit('setSurveysLoading', false)
-          throw err
-        })
     }
   },
   modules: {
